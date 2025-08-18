@@ -21,7 +21,7 @@ Demonstrate API testing skills using **Postman** and **Newman** on the [Todoist 
 - **E2E chain** – create → get by id → delete → verify absence  
 
 ## Example Newman Report
-👉 [Open HTML report](./reports/newman-report.html)
+👉 [Open HTML report](file:///C:/Users/user/Downloads/todoist_e2e-report.html)
 
 ##  How to Run
 1. Install dependencies:
@@ -33,20 +33,16 @@ newman run TODOIST_API.postman_collection.json -e Todoist_ENV.postman_environmen
 ## Evidence & bugs
 screenshots/ — run results (green), UI screenshots, short bug video.
 bug-reports/ — written reports. Key one:
-
-##  SCRUM‑31: API allows creating tasks with content >500 chars; such tasks can’t be edited in UI
+SCRUM‑31: API allows creating tasks with content >500 chars; such tasks can’t be edited in UI
 (API 200 vs. UI block — integration mismatch)
 
 
-Notes
+## Implamantation Retails
 Environment stores dynamic variables (task_id) between requests.
 JSON Schema ensures stable response structure validation.
 Negative scenarios highlight real API limitations.
 
 
-
-
-
-Notes
+## Notes
 This repo is intentionally small and focused on manual API testing with Postman.
 It’s part of a larger portfolio (UI manual, API, and UI automation).
