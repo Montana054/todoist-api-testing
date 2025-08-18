@@ -1,49 +1,40 @@
-API Testing Project — Todoist Public API (v2)
+#  Todoist API Testing (Postman + Newman)
 
-Overview
-This project demonstrates manual and automated API testing skills using the Todoist Public API.
-Focus areas: CRUD testing, negative scenarios, environment variables, and an E2E request chain.
+##  Purpose
+Demonstrate API testing skills using **Postman** and **Newman** on the [Todoist Public API v2](https://developer.todoist.com/rest/v2/).
 
-Tools
-Postman — collections, environments, test scripts
-Newman — CLI execution, HTML report
-Jira — bug tracking and reporting
+##  Tools & Technologies
+- Postman (requests & test scripts)  
+- Collection & Environment variables (`base_url`, `token`, `task_id`, etc.)  
+- JSON Schema validation  
+- Negative testing & E2E scenarios  
+- Newman + HTML reports  
 
+##  Coverage
+- **Auth check** – validate token, status codes, response schema  
+- **CRUD for tasks**  
+  - `POST /tasks` – create task  
+  - `GET /tasks/:id` – fetch by ID  
+  - `DELETE /tasks/:id` – delete task  
+  - `GET /tasks` – check task list  
+- **Negative cases** – invalid token, deleted task by ID  
+- **E2E chain** – create → get by id → delete → verify absence  
 
-Test Coverage
-Auth check (token validation)
-CRUD operations for tasks
-Negative tests (invalid token, invalid payloads, exceeding limits)
-E2E scenario: login → create task → update task → complete → delete
-Schema validation (JSON format checks)
+## Example Newman Report
+👉 [Open HTML report](./reports/newman-report.html)
 
-
-Deliverables
-Postman collection & environment (with variables: base_url, token, task_id, …)
-Newman HTML report (sample run attached)
-Bug reports (Jira screenshots)
-Documentation slides with summary and test design
-
-
-Example Bugs Found
-1. [Medium] API accepts more than 500 characters in the task name (UI limits to 500).
-2. [Minor/UX] Error message not user-friendly for invalid request payload.
-
-
-
-Project Structure
-/postman
-   ├── Todoist_API_Collection.json
-   ├── Todoist_API_Environment.json
-/reports
-   ├── newman_run.html
-/docs
-   ├── API_Testing_Slides.pdf
-   ├── BugReports_Jira.pdf
+##  How to Run
+1. Install dependencies:
+   ```bash
+   npm install -g newman newman-reporter-htmlextra
+2. Run collection with environment:
+newman run TODOIST_API.postman_collection.json -e Todoist_ENV.postman_environment.json -r htmlextra --reporter-htmlextra-export reports/newman-report.html
 
 
 
 Notes
-This repo is intentionally small and focused on manual API testing with Postman.
-It’s part of a larger portfolio (UI manual, API, and UI automation).
+Environment stores dynamic variables (task_id) between requests.
+JSON Schema ensures stable response structure validation.
+Negative scenarios highlight real API limitations.
+
 
