@@ -1,57 +1,45 @@
-Todoist API Testing (Postman)
+API Testing Project — Todoist Public API (v2)
 
-Simple Postman project that demonstrates manual API testing on the Todoist Public API (v2):
-auth check,
-basic CRUD for tasks,
-negative cases,
-a short E2E chain (create → verify via API → verify in UI → delete). 
-Also includes a real bug found during testing (API→UI inconsistency).
+Overview
+This project demonstrates manual and automated API testing skills using the Todoist Public API.
+Focus areas: CRUD testing, negative scenarios, environment variables, and an E2E request chain.
 
-
-Repo structure
-
-/collection/         # Postman collection (JSON)
-/environment/        # Postman environment (JSON)
-/bug-reports/        # Short written bug reports (md/pdf)
-/screenshots/        # Evidence: runs, UI states, bug video/s
-
-What’s inside
-Collection: TODOIST API.postman_collection.json
-Auth / Check Login (GET /projects) – basic 200/401 checks
-Tasks / Create Task (POST /tasks)
-Tasks / Update Task (POST /tasks/:id) – optional
-Tasks / Delete Task (DELETE /tasks/:id)
-E2E folder: create → check → delete (+ negative 404 on re-delete)
+Tools
+Postman — collections, environments, test scripts
+Newman — CLI execution, HTML report
+Jira — bug tracking and reporting
 
 
-Environment: Todoist ENV..postman_environment.json
-base_url (e.g. https://api.todoist.com/rest/v2)
-token (Bearer)
-task_id (set from create response)
+Test Coverage
+Auth check (token validation)
+CRUD operations for tasks
+Negative tests (invalid token, invalid payloads, exceeding limits)
+E2E scenario: login → create task → update task → complete → delete
+Schema validation (JSON format checks)
 
 
+Deliverables
+Postman collection & environment (with variables: base_url, token, task_id, …)
+Newman HTML report (sample run attached)
+Bug reports (Jira screenshots)
+Documentation slides with summary and test design
 
-How to run (Postman)
-1. Import the collection and environment (File → Import).
-2. Open Environment and set token to your Todoist API token
-3. Select the environment (top‑right).
-4. Run requests by folders or via Collection Runner:
-E2E: expect all green; the final re-delete intentionally expects 404 (negative).
+
+Example Bugs Found
+1. [Medium] API accepts more than 500 characters in the task name (UI limits to 500).
+2. [Minor/UX] Error message not user-friendly for invalid request payload.
 
 
 
-
-Tests & scripts
-Each request has minimal tests (status, JSON shape, required fields).
-Create request saves task_id to environment for chained steps.
-Auth endpoint contains negative check (401 without/invalid token).
-
-Evidence & bugs
-screenshots/ — run results (green), UI screenshots, short bug video.
-bug-reports/ — written reports. Key one:
-
-SCRUM‑31: API allows creating tasks with content >500 chars; such tasks can’t be edited in UI
-(API 200 vs. UI block — integration mismatch)
+Project Structure
+/postman
+   ├── Todoist_API_Collection.json
+   ├── Todoist_API_Environment.json
+/reports
+   ├── newman_run.html
+/docs
+   ├── API_Testing_Slides.pdf
+   ├── BugReports_Jira.pdf
 
 
 
