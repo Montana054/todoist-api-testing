@@ -1,0 +1,1135 @@
+{
+	"info": {
+		"_postman_id": "72f97b16-f451-476e-a1c5-52de8ac84b76",
+		"name": "TODOIST_API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19231465"
+	},
+	"item": [
+		{
+			"name": "Authentication & Setup",
+			"item": [
+				{
+					"name": "01 - Check Login (get projects)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Response is array\", function () {\r",
+									"    pm.expect(pm.response.json()).to.be.an(\"array\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/projects",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"projects"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Basic CRUD",
+			"item": [
+				{
+					"name": "01 - Create basic task",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 or 201\", function () {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,201]);\r",
+									"});\r",
+									"let jsonData = pm.response.json();\r",
+									"pm.environment.set(\"task_id\", jsonData.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const timestamp = new Date().getTime();\r",
+									"pm.environment.set(\"task_content\", `Task API : ${timestamp}`);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"content\": \"{{task_content}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks?",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "02 - Get task by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Task matches expected ID\", function () {\r",
+									"    let json = pm.response.json();\r",
+									"    pm.expect(json.id).to.eql(pm.environment.get(\"task_id\"));\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks/{{task_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks",
+								"{{task_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "03 - Delete task by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks/{{task_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks",
+								"{{task_id}}"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Advanced scenarios",
+			"item": [
+				{
+					"name": "01 –  Create Task with Priority & due string",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"let jsonData = pm.response.json();\r",
+									"pm.environment.set(\"task_id\", jsonData.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const ts = new Date().getTime();\r",
+									"pm.environment.set(\"task_content\", `Task API with Priority & Data : ${ts}`);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"content\": \"{{task_content}}\",\r\n  \"description\": \"due : due_string\",\r\n  \"priority\": 4,\r\n  \"due_string\": \"tomorrow at 12:00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks?",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "02 –  Create Task with Priority & due date",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"let jsonData = pm.response.json();\r",
+									"pm.environment.set(\"task_id\", jsonData.id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const timestamp = new Date().getTime();\r",
+									"pm.environment.set(\"task_content\", `Task API with Priority & Data : ${timestamp}`);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"content\": \"{{task_content}}\",\r\n  \"description\": \"due : date\",\r\n  \"priority\": 2,\r\n  \"due_date\": \"2026-08-01\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks?",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Negative cases",
+			"item": [
+				{
+					"name": "01 - Check Login (401)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401\", function () {\r",
+									"    pm.response.to.have.status(401);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  f0b73129fb859115c7964a48a370282179634797",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/projects",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "02 – Create Task with Empty Content (400)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should fail with 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"content\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks?",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "03 –  Create Task with Max Characters in Title (400)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should fail with 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"let jsonData = pm.response.json();\r",
+									"pm.environment.set(\"task_id\", jsonData.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const timestamp = new Date().getTime();\r",
+									"pm.environment.set(\"task_content\", `Task API with Priority & Data Task API with Priority & Data Task API with Priority & Data Task API with Priority & Data Task API with Priority & Data Task API with Priority & Data Task API with Priority & Data Task API with Priority & Data Task API with Priority & Data Task API with Priority & Data Task API with Priority & Data Task API with Priority & Data Task API with Priority & Data Task API with Priority & Data Task API with Priority & Data Task API with Priority & Data Task APIsdfsfsdsfdfsf`);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"content\": \"{{task_content}}\",\r\n  \"priority\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks?",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "04 – Get Task by ID (Confirm Deletion – 404)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tasks/{{task_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks",
+								"{{task_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Utility",
+			"item": [
+				{
+					"name": "01 – Get All Projects and Save project_id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"pm.environment.set(\"project_id\", jsonData[0].id);\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/projects",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "02 – get Project Collaborators",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/projects/{{project_id}}/collaborators",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"projects",
+								"{{project_id}}",
+								"collaborators"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "03 – Get All Tasks and Save ID List",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"let tasks = pm.response.json();\r",
+									"let ids = tasks.map(t => t.id);\r",
+									"\r",
+									"if (ids.length > 0) {\r",
+									"    pm.environment.set(\"task_ids\", JSON.stringify(ids));\r",
+									"    console.log(\"Task IDs saved:\", ids);\r",
+									"    pm.test(\"Task list is not empty\", function () {\r",
+									"        pm.expect(ids.length).to.be.above(0);\r",
+									"    });\r",
+									"} else {\r",
+									"    pm.environment.unset(\"task_ids\");\r",
+									"    console.log(\"No tasks found.\");\r",
+									"    pm.test(\"Task list is empty\", function () {\r",
+									"        pm.expect(ids.length).to.eql(0);\r",
+									"    });\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tasks",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "End to End",
+			"item": [
+				{
+					"name": "01 - Check Login (get projects)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"const sOK = parseInt(pm.collectionVariables.get(\"status_ok\"));\r",
+									"const sCreated = parseInt(pm.collectionVariables.get(\"status_created\"));\r",
+									"pm.test(\"Status 200 or 201\", () => {\r",
+									"  pm.expect(pm.response.code).to.be.oneOf([sOK, sCreated]);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"const rawSchema = pm.variables.get(\"schema_projects\"); \r",
+									"pm.test(\"Schema variable exists\", () => pm.expect(rawSchema, \"schema_projects missing\").to.be.a(\"string\"));\r",
+									"const schema = JSON.parse(rawSchema);\r",
+									"\r",
+									"pm.test(\"Schema: projects list matches\", () => {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/projects",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"projects"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "02 –  Create Task with Priority & due date",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"const sOK = parseInt(pm.collectionVariables.get(\"status_ok\"));\r",
+									"const sCreated = parseInt(pm.collectionVariables.get(\"status_created\"));\r",
+									"pm.test(\"Status 200 or 201\", () => {\r",
+									"  pm.expect(pm.response.code).to.be.oneOf([sOK, sCreated]);\r",
+									"});\r",
+									"\r",
+									"const rawSchema = pm.variables.get(\"schema_task_create\");\r",
+									"pm.test(\"Schema var exists\", () => pm.expect(rawSchema, \"schema_task_create is missing\").to.be.a(\"string\"));\r",
+									"const schema = JSON.parse(rawSchema);\r",
+									"pm.test(\"Schema: created task matches\", () => {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"task_id\", pm.response.json().id);\r",
+									"\r",
+									"pm.test(\"ID equals saved task_id\", () => {\r",
+									"  const body = pm.response.json();\r",
+									"  pm.expect(String(body.id)).to.eql(String(pm.environment.get(\"task_id\")));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content is non-empty\", () => {\r",
+									"  const body = pm.response.json();\r",
+									"  pm.expect(body.content).to.be.a(\"string\").and.not.empty;\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const timestamp = new Date().getTime();\r",
+									"pm.environment.set(\"task_content\", `Task API with Priority & Data : ${timestamp}`);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"content\": \"API portfolio test{{task_content}}\",\r\n  \"description\": \"due : date\",\r\n  \"priority\": 2,\r\n  \"due_date\": \"2026-08-01\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks?",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "03 - Get task by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const sOK = parseInt(pm.collectionVariables.get(\"status_ok\"));\r",
+									"const sCreated = parseInt(pm.collectionVariables.get(\"status_created\"));\r",
+									"pm.test(\"Status 200 or 201\", () => {\r",
+									"  pm.expect(pm.response.code).to.be.oneOf([sOK, sCreated]);\r",
+									"});\r",
+									"\r",
+									"const rawSchema = pm.variables.get(\"schema_get_task_by_id\"); \r",
+									"pm.test(\"Schema var exists\", () => pm.expect(rawSchema, \"schema_get_task_by_id missing\").to.be.a(\"string\"));\r",
+									"pm.test(\"Schema: task matches\", () => {\r",
+									"  pm.response.to.have.jsonSchema(JSON.parse(rawSchema));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"ID equals saved task_id\", () => {\r",
+									"  const body = pm.response.json();\r",
+									"  pm.expect(String(body.id)).to.eql(String(pm.environment.get(\"task_id\")));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content is non-empty\", () => {\r",
+									"  const body = pm.response.json();\r",
+									"  pm.expect(body.content).to.be.a(\"string\").and.not.empty;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks/{{task_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks",
+								"{{task_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "04 - Delete task by id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"const sNoContent = parseInt(pm.collectionVariables.get(\"status_no_content\"));\r",
+									"pm.test(\"Status 204\", () => {\r",
+									"    pm.expect(pm.response.code).to.eql(sNoContent);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body is empty\", () => {\r",
+									"    pm.expect(pm.response.text()).to.eql('');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status 204\", () => pm.response.to.have.status(204));\r",
+									"\r",
+									"\r",
+									"const deletedId = pm.request.url.path.slice(-1)[0];\r",
+									"pm.environment.set(\"deleted_task_id\", deletedId);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/tasks/{{task_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks",
+								"{{task_id}}"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "05 – Get All Tasks (check delete)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"List: 200 & JSON array\", () => {\r",
+									"  pm.response.to.have.status(200);\r",
+									"  pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"const deletedId = String(pm.environment.get(\"deleted_task_id\") || \"\").trim();\r",
+									"pm.test(\"deleted_task_id is set\", () => {\r",
+									"  pm.expect(deletedId, \"deleted_task_id missing/empty\").to.be.a(\"string\").and.not.empty;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"const arr = pm.response.json();\r",
+									"pm.expect(arr, \"Response is not an array\").to.be.an(\"array\");\r",
+									"const idsInList = arr.map(x => String(x.id));\r",
+									"console.log(\"IDs in active list:\", idsInList.join(\",\"));\r",
+									"console.log(\"deleted_task_id:\", deletedId);\r",
+									"\r",
+									"\r",
+									"const present = idsInList.includes(deletedId);\r",
+									"pm.test(`Deleted task ${deletedId} NOT in active list`, () => {\r",
+									"  pm.expect(present, `Task ${deletedId} is still present in the active list`).to.eql(false);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer  {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/tasks",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "schema_task_create",
+			"value": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"title\": \"Generated schema for Root\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\"\n    },\n    \"assigner_id\": {},\n    \"assignee_id\": {},\n    \"project_id\": {\n      \"type\": \"string\"\n    },\n    \"section_id\": {},\n    \"parent_id\": {},\n    \"order\": {\n      \"type\": \"number\"\n    },\n    \"content\": {\n      \"type\": \"string\"\n    },\n    \"description\": {\n      \"type\": \"string\"\n    },\n    \"is_completed\": {\n      \"type\": \"boolean\"\n    },\n    \"labels\": {\n      \"type\": \"array\",\n      \"items\": {}\n    },\n    \"priority\": {\n      \"type\": \"number\"\n    },\n    \"comment_count\": {\n      \"type\": \"number\"\n    },\n    \"creator_id\": {\n      \"type\": \"string\"\n    },\n    \"created_at\": {\n      \"type\": \"string\"\n    },\n    \"due\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"date\": {\n          \"type\": \"string\"\n        },\n        \"string\": {\n          \"type\": \"string\"\n        },\n        \"lang\": {\n          \"type\": \"string\"\n        },\n        \"is_recurring\": {\n          \"type\": \"boolean\"\n        }\n      },\n      \"required\": [\n        \"date\",\n        \"string\",\n        \"lang\",\n        \"is_recurring\"\n      ]\n    },\n    \"url\": {\n      \"type\": \"string\"\n    },\n    \"duration\": {},\n    \"deadline\": {}\n  },\n  \"required\": [\n    \"id\",\n    \"assigner_id\",\n    \"assignee_id\",\n    \"project_id\",\n    \"section_id\",\n    \"parent_id\",\n    \"order\",\n    \"content\",\n    \"description\",\n    \"is_completed\",\n    \"labels\",\n    \"priority\",\n    \"comment_count\",\n    \"creator_id\",\n    \"created_at\",\n    \"due\",\n    \"url\",\n    \"duration\",\n    \"deadline\"\n  ]\n}",
+			"type": "string"
+		},
+		{
+			"key": "status_ok",
+			"value": "200",
+			"type": "string"
+		},
+		{
+			"key": "status_created ",
+			"value": "201",
+			"type": "string"
+		},
+		{
+			"key": "status_bad_request",
+			"value": "400",
+			"type": "string"
+		},
+		{
+			"key": "status_not_found",
+			"value": "404",
+			"type": "string"
+		},
+		{
+			"key": "schema_projects",
+			"value": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"title\": \"Generated schema for Root\",\n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"id\": {\n        \"type\": \"string\"\n      },\n      \"parent_id\": {},\n      \"order\": {\n        \"type\": \"number\"\n      },\n      \"color\": {\n        \"type\": \"string\"\n      },\n      \"name\": {\n        \"type\": \"string\"\n      },\n      \"comment_count\": {\n        \"type\": \"number\"\n      },\n      \"is_shared\": {\n        \"type\": \"boolean\"\n      },\n      \"is_favorite\": {\n        \"type\": \"boolean\"\n      },\n      \"is_inbox_project\": {\n        \"type\": \"boolean\"\n      },\n      \"is_team_inbox\": {\n        \"type\": \"boolean\"\n      },\n      \"url\": {\n        \"type\": \"string\"\n      },\n      \"view_style\": {\n        \"type\": \"string\"\n      },\n      \"description\": {\n        \"type\": \"string\"\n      }\n    },\n    \"required\": [\n      \"id\",\n      \"parent_id\",\n      \"order\",\n      \"color\",\n      \"name\",\n      \"comment_count\",\n      \"is_shared\",\n      \"is_favorite\",\n      \"is_inbox_project\",\n      \"is_team_inbox\",\n      \"url\",\n      \"view_style\",\n      \"description\"\n    ]\n  }\n}",
+			"type": "string"
+		},
+		{
+			"key": "schema_get_task_by_id",
+			"value": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"title\": \"Generated schema for Root\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\"\n    },\n    \"assigner_id\": {},\n    \"assignee_id\": {},\n    \"project_id\": {\n      \"type\": \"string\"\n    },\n    \"section_id\": {},\n    \"parent_id\": {},\n    \"order\": {\n      \"type\": \"number\"\n    },\n    \"content\": {\n      \"type\": \"string\"\n    },\n    \"description\": {\n      \"type\": \"string\"\n    },\n    \"is_completed\": {\n      \"type\": \"boolean\"\n    },\n    \"labels\": {\n      \"type\": \"array\",\n      \"items\": {}\n    },\n    \"priority\": {\n      \"type\": \"number\"\n    },\n    \"comment_count\": {\n      \"type\": \"number\"\n    },\n    \"creator_id\": {\n      \"type\": \"string\"\n    },\n    \"created_at\": {\n      \"type\": \"string\"\n    },\n    \"due\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"date\": {\n          \"type\": \"string\"\n        },\n        \"string\": {\n          \"type\": \"string\"\n        },\n        \"lang\": {\n          \"type\": \"string\"\n        },\n        \"is_recurring\": {\n          \"type\": \"boolean\"\n        }\n      },\n      \"required\": [\n        \"date\",\n        \"string\",\n        \"lang\",\n        \"is_recurring\"\n      ]\n    },\n    \"url\": {\n      \"type\": \"string\"\n    },\n    \"duration\": {},\n    \"deadline\": {}\n  },\n  \"required\": [\n    \"id\",\n    \"assigner_id\",\n    \"assignee_id\",\n    \"project_id\",\n    \"section_id\",\n    \"parent_id\",\n    \"order\",\n    \"content\",\n    \"description\",\n    \"is_completed\",\n    \"labels\",\n    \"priority\",\n    \"comment_count\",\n    \"creator_id\",\n    \"created_at\",\n    \"due\",\n    \"url\",\n    \"duration\",\n    \"deadline\"\n  ]\n}",
+			"type": "string"
+		},
+		{
+			"key": "status_no_content",
+			"value": "204",
+			"type": "string"
+		},
+		{
+			"key": "schema_erroe_404",
+			"value": "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"title\": \"Generated schema for Root\",\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\"\n    },\n    \"assigner_id\": {},\n    \"assignee_id\": {},\n    \"project_id\": {\n      \"type\": \"string\"\n    },\n    \"section_id\": {},\n    \"parent_id\": {},\n    \"order\": {\n      \"type\": \"number\"\n    },\n    \"content\": {\n      \"type\": \"string\"\n    },\n    \"description\": {\n      \"type\": \"string\"\n    },\n    \"is_completed\": {\n      \"type\": \"boolean\"\n    },\n    \"labels\": {\n      \"type\": \"array\",\n      \"items\": {}\n    },\n    \"priority\": {\n      \"type\": \"number\"\n    },\n    \"comment_count\": {\n      \"type\": \"number\"\n    },\n    \"creator_id\": {\n      \"type\": \"string\"\n    },\n    \"created_at\": {\n      \"type\": \"string\"\n    },\n    \"due\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"date\": {\n          \"type\": \"string\"\n        },\n        \"string\": {\n          \"type\": \"string\"\n        },\n        \"lang\": {\n          \"type\": \"string\"\n        },\n        \"is_recurring\": {\n          \"type\": \"boolean\"\n        }\n      },\n      \"required\": [\n        \"date\",\n        \"string\",\n        \"lang\",\n        \"is_recurring\"\n      ]\n    },\n    \"url\": {\n      \"type\": \"string\"\n    },\n    \"duration\": {},\n    \"deadline\": {}\n  },\n  \"required\": [\n    \"id\",\n    \"assigner_id\",\n    \"assignee_id\",\n    \"project_id\",\n    \"section_id\",\n    \"parent_id\",\n    \"order\",\n    \"content\",\n    \"description\",\n    \"is_completed\",\n    \"labels\",\n    \"priority\",\n    \"comment_count\",\n    \"creator_id\",\n    \"created_at\",\n    \"due\",\n    \"url\",\n    \"duration\",\n    \"deadline\"\n  ]\n}",
+			"type": "string"
+		}
+	]
+}
