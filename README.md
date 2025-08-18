@@ -30,6 +30,12 @@ Demonstrate API testing skills using **Postman** and **Newman** on the [Todoist 
 2. Run collection with environment:
 newman run TODOIST_API.postman_collection.json -e Todoist_ENV.postman_environment.json -r htmlextra --reporter-htmlextra-export reports/newman-report.html
 
+## Evidence & bugs
+screenshots/ — run results (green), UI screenshots, short bug video.
+bug-reports/ — written reports. Key one:
+
+##  SCRUM‑31: API allows creating tasks with content >500 chars; such tasks can’t be edited in UI
+(API 200 vs. UI block — integration mismatch)
 
 
 Notes
@@ -38,3 +44,9 @@ JSON Schema ensures stable response structure validation.
 Negative scenarios highlight real API limitations.
 
 
+
+
+
+Notes
+This repo is intentionally small and focused on manual API testing with Postman.
+It’s part of a larger portfolio (UI manual, API, and UI automation).
