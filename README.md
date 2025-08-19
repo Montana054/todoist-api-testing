@@ -21,7 +21,7 @@ Demonstrate API testing skills using **Postman** and **Newman** on the [Todoist 
 - **E2E chain** – create → get by id → delete → verify absence  
 
 ## Example Newman Report
-👉 [Open HTML report](https://github.com/Montana054/todoist-api-testing/tree/912058cf7514c543d661d57090597ef69d91de4d/newman%20reports)
+ [Open HTML report](https://github.com/Montana054/todoist-api-testing/tree/912058cf7514c543d661d57090597ef69d91de4d/newman%20reports)
 
 ##  How to Run
 1. Install dependencies:
